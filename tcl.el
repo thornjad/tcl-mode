@@ -32,6 +32,8 @@
 ;;
 ;;; Commentary:
 
+;; This version of tcl-mode is forked from within GNU Emacs.
+
 ;; CUSTOMIZATION NOTES:
 ;; * tcl-proc-list can be used to customize a list of things that "define" other
 ;; things. Eg in my project I put "defvar" in this list.
