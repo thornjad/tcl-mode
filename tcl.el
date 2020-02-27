@@ -589,8 +589,8 @@ already exist."
   (set (make-local-variable 'add-log-current-defun-function)
        'tcl-add-log-defun)
 
-  (setq-local beginning-of-defun-function #'tcl-beginning-of-defun-function)
-  (setq-local end-of-defun-function #'tcl-end-of-defun-function)
+  ;; (setq-local beginning-of-defun-function #'tcl-beginning-of-defun-function)
+  ;; (setq-local end-of-defun-function #'tcl-end-of-defun-function)
 
   (easy-menu-add tcl-mode-menu))
 
@@ -968,14 +968,16 @@ Returns nil if line starts inside a string, t if in a comment."
 ;; Interfaces to other packages.
 ;;
 
+;; TODO this is totally broken
 (defun tcl-beginning-of-defun-function (&optional arg)
   "`beginning-of-defun-function' for Tcl mode."
   (when (or (not arg) (= arg 0))
     (setq arg 1))
-  (let* ((search-fn (if (> arg 0)
-                        ;; Positive arg means to search backward.
-                        #'re-search-backward
-                      #'re-search-forward))
+  (let* ((search-fn
+          (if (> arg 0)
+              ;; Positive arg means to search backward.
+              #'re-search-backward
+            #'re-search-forward))
          (arg (abs arg))
          (result t))
     (while (and (> arg 0) result)
