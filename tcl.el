@@ -131,8 +131,8 @@ to take place:
   5. Create an empty comment.
   6. Move backward to start of comment, indenting if necessary."
   :type '(choice (const :tag "Always" t)
-     (const :tag "Beginning only" nil)
-     (other :tag "Maybe move or make or delete comment" tcl))
+                 (const :tag "Beginning only" nil)
+                 (other :tag "Maybe move or make or delete comment" tcl))
   :group 'tcl)
 
 
@@ -461,25 +461,25 @@ is a Tcl expression, and the last argument is Tcl commands.")
 (defun tcl-set-proc-regexp ()
   "Set `tcl-proc-regexp' from variable `tcl-proc-list'."
   (setq tcl-proc-regexp
-  (concat "^\\s-*" (regexp-opt tcl-proc-list t) "[ \t]+")))
+        (concat "^\\s-*" (regexp-opt tcl-proc-list t) "[ \t]+")))
 
 (defun tcl-set-font-lock-keywords ()
   "Set `tcl-font-lock-keywords'.
 Uses variables `tcl-proc-regexp' and `tcl-keyword-list'."
   (setq tcl-font-lock-keywords
-  (list
-   ;; Names of functions (and other "defining things").
-   (list (concat tcl-proc-regexp "\\([^ \t\n]+\\)")
-         2 'font-lock-function-name-face)
+        (list
+         ;; Names of functions (and other "defining things").
+         (list (concat tcl-proc-regexp "\\([^ \t\n]+\\)")
+               2 'font-lock-function-name-face)
 
-   ;; Names of type-defining things.
-   (list (concat "\\(\\s-\\|^\\)"
-           (regexp-opt tcl-typeword-list t)
-           "\\(\\s-\\|$\\)")
-         2 'font-lock-type-face)
+         ;; Names of type-defining things.
+         (list (concat "\\(\\s-\\|^\\)"
+                       (regexp-opt tcl-typeword-list t)
+                       "\\(\\s-\\|$\\)")
+               2 'font-lock-type-face)
 
          (list (concat "\\_<" (regexp-opt tcl-builtin-list t) "\\_>")
-         1 'font-lock-builtin-face)
+               1 'font-lock-builtin-face)
 
          ;; When variable names are enclosed in {} braces, any
          ;; character can be used. Otherwise just letters, digits,
@@ -497,11 +497,11 @@ Uses variables `tcl-proc-regexp' and `tcl-keyword-list'."
 
          '("\\(^\\|[^\\]\\)\\(\\\\\\\\\\)*\\(\\\\\\)$" 3 'tcl-escaped-newline)
 
-   ;; Keywords.  Only recognized if surrounded by whitespace.
-   ;; FIXME consider using "not word or symbol", not
-   ;; "whitespace".
-   (cons (concat "\\_<" (regexp-opt tcl-keyword-list t) "\\_>")
-         1))))
+         ;; Keywords.  Only recognized if surrounded by whitespace.
+         ;; FIXME consider using "not word or symbol", not
+         ;; "whitespace".
+         (cons (concat "\\_<" (regexp-opt tcl-keyword-list t) "\\_>")
+               1))))
 
 (if tcl-proc-regexp
     ()
@@ -606,8 +606,8 @@ already exist."
   (self-insert-command arg)
   (if (and tcl-auto-newline (= last-command-event ?\;))
       (progn
-  (newline)
-  (tcl-indent-line))))
+        (newline)
+        (tcl-indent-line))))
 
 ;; This is used for closing braces.  If tcl-auto-newline is set, can
 ;; insert a newline both before and after the brace, depending on
@@ -619,19 +619,19 @@ already exist."
   ;; newline first.
   (if tcl-auto-newline
       (progn
-  (if (save-excursion
-        (skip-chars-backward " \t")
-        (bolp))
-      ()
-    (tcl-indent-line)
-    (newline))
-  ;; In auto-newline case, must insert a newline after each
-  ;; brace.  So an explicit loop is needed.
-  (while (> arg 0)
-    (insert last-command-event)
-    (tcl-indent-line)
-    (newline)
-    (setq arg (1- arg))))
+        (if (save-excursion
+              (skip-chars-backward " \t")
+              (bolp))
+            ()
+          (tcl-indent-line)
+          (newline))
+        ;; In auto-newline case, must insert a newline after each
+        ;; brace.  So an explicit loop is needed.
+        (while (> arg 0)
+          (insert last-command-event)
+          (tcl-indent-line)
+          (newline)
+          (setq arg (1- arg))))
     (self-insert-command arg))
   (tcl-indent-line))
 
@@ -657,51 +657,51 @@ from the following list to take place:
         (call-interactively 'indent-for-tab-command))
     ;; "Perl-mode" style TAB command.
     (let* ((ipoint (point))
-     (eolpoint (progn
-           (end-of-line)
-           (point)))
-     (comment-p (tcl-in-comment)))
+           (eolpoint (progn
+                       (end-of-line)
+                       (point)))
+           (comment-p (tcl-in-comment)))
       (cond
        ((= ipoint (line-beginning-position))
-  (beginning-of-line)
-  (tcl-indent-line)
-  ;; If indenting didn't leave us in column 0, go to the
-  ;; indentation.  Otherwise leave point at end of line.  This
-  ;; is a hack.
-  (if (= (point) (line-beginning-position))
-      (end-of-line)
-    (back-to-indentation)))
+        (beginning-of-line)
+        (tcl-indent-line)
+        ;; If indenting didn't leave us in column 0, go to the
+        ;; indentation.  Otherwise leave point at end of line.  This
+        ;; is a hack.
+        (if (= (point) (line-beginning-position))
+            (end-of-line)
+          (back-to-indentation)))
        ((and comment-p (looking-at "[ \t]*$"))
-  ;; Empty comment, so delete it.  We also delete any ";"
-  ;; characters at the end of the line.  I think this is
-  ;; friendlier, but I don't know how other people will feel.
-  (backward-char)
-  (skip-chars-backward " \t;")
-  (delete-region (point) eolpoint))
+        ;; Empty comment, so delete it.  We also delete any ";"
+        ;; characters at the end of the line.  I think this is
+        ;; friendlier, but I don't know how other people will feel.
+        (backward-char)
+        (skip-chars-backward " \t;")
+        (delete-region (point) eolpoint))
        ((and comment-p (< ipoint (point)))
-  ;; Before comment, so skip to it.
-  (tcl-indent-line)
-  (indent-for-comment))
+        ;; Before comment, so skip to it.
+        (tcl-indent-line)
+        (indent-for-comment))
        ((/= ipoint eolpoint)
-  ;; Go to end of line (since we're not there yet).
-  (goto-char eolpoint)
-  (tcl-indent-line))
+        ;; Go to end of line (since we're not there yet).
+        (goto-char eolpoint)
+        (tcl-indent-line))
        ((not comment-p)
-  (tcl-indent-line)
-  (comment-indent))
+        (tcl-indent-line)
+        (comment-indent))
        (t
-  ;; Go to start of comment.  We don't leave point where it is
-  ;; because we want to skip comment-start-skip.
-  (tcl-indent-line)
-  (indent-for-comment))))))
+        ;; Go to start of comment.  We don't leave point where it is
+        ;; because we want to skip comment-start-skip.
+        (tcl-indent-line)
+        (indent-for-comment))))))
 
 (defun tcl-indent-line ()
   "Indent current line as Tcl code.
 Return the amount the indentation changed by."
   (let ((indent (tcl-calculate-indent nil))
-  beg shift-amt
-  (case-fold-search nil)
-  (pos (- (point-max) (point))))
+        beg shift-amt
+        (case-fold-search nil)
+        (pos (- (point-max) (point))))
     (if (null indent)
         'noindent
       (beginning-of-line)
@@ -732,41 +732,41 @@ of sexp that indicates types.
 
 See documentation for variable `tcl-type-alist' for more information."
   (let ((count 0)
-  result
-  word-stack)
+        result
+        word-stack)
     (while (and (< count 5)
-    (not result))
+                (not result))
       (condition-case nil
-    (progn
-      ;; FIXME should use "tcl-backward-sexp", which would skip
-      ;; over entire variables, etc.
-      (backward-sexp)
-      (if (looking-at "[a-zA-Z_]+")
-    (let ((list tcl-type-alist)
-          entry)
-      (setq word-stack (cons (tcl-word-no-props) word-stack))
-      (while (and list (not result))
-        (setq entry (car list))
-        (setq list (cdr list))
-        (let ((index 0))
-          (while (and entry (<= index count))
-      ;; Abort loop if string does not match word on
-      ;; stack.
-      (and (stringp (car entry))
-           (not (string= (car entry)
-             (nth index word-stack)))
-           (setq entry nil))
-      (setq entry (cdr entry))
-      (setq index (1+ index)))
-          (and (> index count)
-         (not (stringp (car entry)))
-         (setq result (car entry)))
-          )))
-        (setq word-stack (cons nil word-stack))))
-  (error nil))
+          (progn
+            ;; FIXME should use "tcl-backward-sexp", which would skip
+            ;; over entire variables, etc.
+            (backward-sexp)
+            (if (looking-at "[a-zA-Z_]+")
+                (let ((list tcl-type-alist)
+                      entry)
+                  (setq word-stack (cons (tcl-word-no-props) word-stack))
+                  (while (and list (not result))
+                    (setq entry (car list))
+                    (setq list (cdr list))
+                    (let ((index 0))
+                      (while (and entry (<= index count))
+                        ;; Abort loop if string does not match word on
+                        ;; stack.
+                        (and (stringp (car entry))
+                             (not (string= (car entry)
+                                           (nth index word-stack)))
+                             (setq entry nil))
+                        (setq entry (cdr entry))
+                        (setq index (1+ index)))
+                      (and (> index count)
+                           (not (stringp (car entry)))
+                           (setq result (car entry)))
+                      )))
+              (setq word-stack (cons nil word-stack))))
+        (error nil))
       (setq count (1+ count)))
     (and tcl-explain-indentation
-   (message "Indentation type %s" result))
+         (message "Indentation type %s" result))
     result))
 
 (defun tcl-calculate-indent (&optional parse-start)
@@ -776,103 +776,97 @@ Returns nil if line starts inside a string, t if in a comment."
   (save-excursion
     (beginning-of-line)
     (let* ((indent-point (point))
-     (case-fold-search nil)
-     (continued-line
-      (save-excursion
-        (if (bobp)
-      nil
-    (backward-char)
-    (= ?\\ (preceding-char)))))
-     (continued-indent-value (if continued-line
-               tcl-continued-indent-level
-             0))
-     state
-     containing-sexp
-     found-next-line)
+           (case-fold-search nil)
+           (continued-line
+            (save-excursion
+              (if (bobp)
+                  nil
+                (backward-char)
+                (= ?\\ (preceding-char)))))
+           (continued-indent-value (if continued-line
+                                       tcl-continued-indent-level
+                                     0))
+           state
+           containing-sexp
+           found-next-line)
       (cond
        (parse-start
-  (goto-char parse-start))
+        (goto-char parse-start))
        ((not (beginning-of-defun))
         ;; If we're not in a function, don't use
         ;; `tcl-beginning-of-defun-function'.
         (let ((beginning-of-defun-function nil))
           (beginning-of-defun))))
       (while (< (point) indent-point)
-  (setq parse-start (point))
-  (setq state (parse-partial-sexp (point) indent-point 0))
-  (setq containing-sexp (car (cdr state))))
+        (setq parse-start (point))
+        (setq state (parse-partial-sexp (point) indent-point 0))
+        (setq containing-sexp (car (cdr state))))
       (cond ((or (nth 3 state) (nth 4 state))
-       ;; Inside comment or string.  Return nil or t if should
-       ;; not change this line
-       (nth 4 state))
-      ((null containing-sexp)
-       ;; Line is at top level.
-       continued-indent-value)
-      (t
-       ;; Set expr-p if we are looking at the expression part of
-       ;; an "if", "expr", etc statement.  Set commands-p if we
-       ;; are looking at the body part of an if, while, etc
-       ;; statement.  FIXME Should check for "for" loops here.
-       (goto-char containing-sexp)
-       (let* ((sexpr-type (tcl-figure-type))
-        (expr-p (eq sexpr-type 'tcl-expr))
-        (commands-p (eq sexpr-type 'tcl-commands))
-        (expr-start (point)))
-         ;; Find the first statement in the block and indent
-         ;; like it.  The first statement in the block might be
-         ;; on the same line, so what we do is skip all
-         ;; "virtually blank" lines, looking for a non-blank
-         ;; one.  A line is virtually blank if it only contains
-         ;; a comment and whitespace.  FIXME continued comments
-         ;; aren't supported.  They are a wart on Tcl anyway.
-         ;; We do it this funky way because we want to know if
-         ;; we've found a statement on some line _after_ the
-         ;; line holding the sexp opener.
-         (goto-char containing-sexp)
-         (forward-char)
-         (if (and (< (point) indent-point)
-      (looking-at "[ \t]*\\(#.*\\)?$"))
-       (progn
-         (forward-line)
-         (while (and (< (point) indent-point)
-         (looking-at "[ \t]*\\(#.*\\)?$"))
-           (setq found-next-line t)
-           (forward-line))))
-         (if (or continued-line
-           (/= (char-after containing-sexp) ?{)
-           expr-p)
-       (progn
-         ;; Line is continuation line, or the sexp opener
-         ;; is not a curly brace, or we are looking at
-         ;; an `expr' expression (which must be split
-         ;; specially).  So indentation is column of first
-         ;; good spot after sexp opener (with some added
-         ;; in the continued-line case).  If there is no
-         ;; nonempty line before the indentation point, we
-         ;; use the column of the character after the sexp
-         ;; opener.
-         (if (>= (point) indent-point)
-       (progn
-         (goto-char containing-sexp)
-         (forward-char))
-           (skip-chars-forward " \t"))
-         (+ (current-column) continued-indent-value))
-     ;; After a curly brace, and not a continuation line.
-     ;; So take indentation from first good line after
-     ;; start of block, unless that line is on the same
-     ;; line as the opening brace.  In this case use the
-     ;; indentation of the opening brace's line, plus
-     ;; another indent step.  If we are in the body part
-     ;; of an "if" or "while" then the indentation is
-     ;; taken from the line holding the start of the
-     ;; statement.
-     (if (and (< (point) indent-point)
-        found-next-line)
-         (current-indentation)
-       (if commands-p
-           (goto-char expr-start)
-         (goto-char containing-sexp))
-       (+ (current-indentation) tcl-indent-level)))))))))
+             ;; Inside comment or string. Return nil or t if should not change
+             ;; this line
+             (nth 4 state))
+            ((null containing-sexp)
+             ;; Line is at top level.
+             continued-indent-value)
+            (t
+             ;; Set expr-p if we are looking at the expression part of
+             ;; an "if", "expr", etc statement.  Set commands-p if we
+             ;; are looking at the body part of an if, while, etc
+             ;; statement.  FIXME Should check for "for" loops here.
+             (goto-char containing-sexp)
+             (let* ((sexpr-type (tcl-figure-type))
+                    (expr-p (eq sexpr-type 'tcl-expr))
+                    (commands-p (eq sexpr-type 'tcl-commands))
+                    (expr-start (point)))
+               ;; Find the first statement in the block and indent
+               ;; like it.  The first statement in the block might be
+               ;; on the same line, so what we do is skip all
+               ;; "virtually blank" lines, looking for a non-blank
+               ;; one.  A line is virtually blank if it only contains
+               ;; a comment and whitespace.  FIXME continued comments
+               ;; aren't supported.  They are a wart on Tcl anyway.
+               ;; We do it this funky way because we want to know if
+               ;; we've found a statement on some line _after_ the
+               ;; line holding the sexp opener.
+               (goto-char containing-sexp)
+               (forward-char)
+               (if (and (< (point) indent-point)
+                        (looking-at "[ \t]*\\(#.*\\)?$"))
+                   (progn
+                     (forward-line)
+                     (while (and (< (point) indent-point)
+                                 (looking-at "[ \t]*\\(#.*\\)?$"))
+                       (setq found-next-line t)
+                       (forward-line))))
+               (if (or continued-line
+                       (/= (char-after containing-sexp) ?{)
+                       expr-p)
+                   (progn
+                     ;; Line is continuation line, or the sexp opener is not a curly brace,
+                     ;; or we are looking at an `expr' expression (which must be split
+                     ;; specially). So indentation is column of first good spot after sexp
+                     ;; opener (with some added in the continued-line case). If there is no
+                     ;; nonempty line before the indentation point, we use the column of the
+                     ;; character after the sexp opener.
+                     (if (>= (point) indent-point)
+                         (progn
+                           (goto-char containing-sexp)
+                           (forward-char))
+                       (skip-chars-forward " \t"))
+                     (+ (current-column) continued-indent-value))
+                 ;; After a curly brace, and not a continuation line. So take indentation
+                 ;; from first good line after start of block, unless that line is on the
+                 ;; same line as the opening brace. In this case use the indentation of the
+                 ;; opening brace's line, plus another indent step. If we are in the body
+                 ;; part of an "if" or "while" then the indentation is taken from the line
+                 ;; holding the start of the statement.
+                 (if (and (< (point) indent-point)
+                          found-next-line)
+                     (current-indentation)
+                   (if commands-p
+                       (goto-char expr-start)
+                     (goto-char containing-sexp))
+                   (+ (current-indentation) tcl-indent-level)))))))))
 
 
 
@@ -880,97 +874,96 @@ Returns nil if line starts inside a string, t if in a comment."
   "Indent each line of the Tcl grouping following point."
   (interactive)
   (let ((indent-stack (list nil))
-  (contain-stack (list (point)))
-  (case-fold-search nil)
-  outer-loop-done inner-loop-done state ostate
-  this-indent continued-line
-  (next-depth 0)
-  last-depth)
+        (contain-stack (list (point)))
+        (case-fold-search nil)
+        outer-loop-done inner-loop-done state ostate
+        this-indent continued-line
+        (next-depth 0)
+        last-depth)
     (save-excursion
       (forward-sexp 1))
     (save-excursion
       (setq outer-loop-done nil)
       (while (and (not (eobp)) (not outer-loop-done))
-  (setq last-depth next-depth)
-  ;; Compute how depth changes over this line
-  ;; plus enough other lines to get to one that
-  ;; does not end inside a comment or string.
-  ;; Meanwhile, do appropriate indentation on comment lines.
-  (setq inner-loop-done nil)
-  (while (and (not inner-loop-done)
-        (not (and (eobp) (setq outer-loop-done t))))
-    (setq ostate state)
-    (setq state (parse-partial-sexp (point) (progn (end-of-line) (point))
-            nil nil state))
-    (setq next-depth (car state))
-    (if (or (nth 4 ostate))
-        (tcl-indent-line))
-    (if (or (nth 3 state))
-        (forward-line 1)
-      (setq inner-loop-done t)))
-  (if (<= next-depth 0)
-      (setq outer-loop-done t))
-  (if outer-loop-done
-      nil
-    ;; If this line had ..))) (((.. in it, pop out of the levels
-    ;; that ended anywhere in this line, even if the final depth
-    ;; doesn't indicate that they ended.
-    (while (> last-depth (nth 6 state))
-      (setq indent-stack (cdr indent-stack)
-      contain-stack (cdr contain-stack)
-      last-depth (1- last-depth)))
-    ;; Add levels for any parens that were started in this line.
-    (while (< last-depth next-depth)
-      (setq indent-stack (cons nil indent-stack)
-      contain-stack (cons nil contain-stack)
-      last-depth (1+ last-depth)))
-    (if (null (car contain-stack))
-        (setcar contain-stack
-          (or (car (cdr state))
-        (save-excursion
-          (forward-sexp -1)
-          (point)))))
-    (forward-line 1)
-    (setq continued-line
-    (save-excursion
-      (backward-char)
-      (= (preceding-char) ?\\)))
-    (skip-chars-forward " \t")
-    (if (eolp)
-        nil
-      (if (and (car indent-stack)
-         (>= (car indent-stack) 0))
-    ;; Line is on an existing nesting level.
-    (setq this-indent (car indent-stack))
-        ;; Just started a new nesting level.
-        ;; Compute the standard indent for this level.
-        (let ((val (tcl-calculate-indent
-        (if (car indent-stack)
-            (- (car indent-stack))))))
-    (setcar indent-stack
-      (setq this-indent val))
-    (setq continued-line nil)))
-      (cond ((not (numberp this-indent)))
-      ((= (following-char) ?})
-       (setq this-indent (- this-indent tcl-indent-level)))
-      ((= (following-char) ?\])
-       (setq this-indent (- this-indent 1))))
-      ;; Put chosen indentation into effect.
-      (or (null this-indent)
-    (= (current-column)
-       (if continued-line
-           (+ this-indent tcl-indent-level)
-         this-indent))
-    (progn
-      (delete-region (point) (progn (beginning-of-line) (point)))
-      (indent-to
-       (if continued-line
-           (+ this-indent tcl-indent-level)
-         this-indent)))))))))
+        (setq last-depth next-depth)
+        ;; Compute how depth changes over this line
+        ;; plus enough other lines to get to one that
+        ;; does not end inside a comment or string.
+        ;; Meanwhile, do appropriate indentation on comment lines.
+        (setq inner-loop-done nil)
+        (while (and (not inner-loop-done)
+                    (not (and (eobp) (setq outer-loop-done t))))
+          (setq ostate state)
+          (setq state (parse-partial-sexp (point) (progn (end-of-line) (point))
+                                          nil nil state))
+          (setq next-depth (car state))
+          (if (or (nth 4 ostate))
+              (tcl-indent-line))
+          (if (or (nth 3 state))
+              (forward-line 1)
+            (setq inner-loop-done t)))
+        (if (<= next-depth 0)
+            (setq outer-loop-done t))
+        (if outer-loop-done
+            nil
+          ;; If this line had ..))) (((.. in it, pop out of the levels
+          ;; that ended anywhere in this line, even if the final depth
+          ;; doesn't indicate that they ended.
+          (while (> last-depth (nth 6 state))
+            (setq indent-stack (cdr indent-stack)
+                  contain-stack (cdr contain-stack)
+                  last-depth (1- last-depth)))
+          ;; Add levels for any parens that were started in this line.
+          (while (< last-depth next-depth)
+            (setq indent-stack (cons nil indent-stack)
+                  contain-stack (cons nil contain-stack)
+                  last-depth (1+ last-depth)))
+          (if (null (car contain-stack))
+              (setcar contain-stack
+                      (or (car (cdr state))
+                          (save-excursion
+                            (forward-sexp -1)
+                            (point)))))
+          (forward-line 1)
+          (setq continued-line
+                (save-excursion
+                  (backward-char)
+                  (= (preceding-char) ?\\)))
+          (skip-chars-forward " \t")
+          (if (eolp)
+              nil
+            (if (and (car indent-stack)
+                     (>= (car indent-stack) 0))
+                ;; Line is on an existing nesting level.
+                (setq this-indent (car indent-stack))
+              ;; Just started a new nesting level.
+              ;; Compute the standard indent for this level.
+              (let ((val (tcl-calculate-indent
+                          (if (car indent-stack)
+                              (- (car indent-stack))))))
+                (setcar indent-stack
+                        (setq this-indent val))
+                (setq continued-line nil)))
+            (cond ((not (numberp this-indent)))
+                  ((= (following-char) ?})
+                   (setq this-indent (- this-indent tcl-indent-level)))
+                  ((= (following-char) ?\])
+                   (setq this-indent (- this-indent 1))))
+            ;; Put chosen indentation into effect.
+            (or (null this-indent)
+                (= (current-column)
+                   (if continued-line
+                       (+ this-indent tcl-indent-level)
+                     this-indent))
+                (progn
+                  (delete-region (point) (progn (beginning-of-line) (point)))
+                  (indent-to
+                   (if continued-line
+                       (+ this-indent tcl-indent-level)
+                     this-indent)))))))))
   )
 
 
-
 ;;
 ;; Interfaces to other packages.
 ;;
@@ -1042,8 +1035,8 @@ Returns nil if line starts inside a string, t if in a comment."
     (with-current-buffer (process-buffer proc)
       ;; Delete prompt if requested.
       (when (marker-buffer inferior-tcl-delete-prompt-marker)
-  (let ((inhibit-read-only t))
-    (delete-region (process-mark proc) inferior-tcl-delete-prompt-marker))
+        (let ((inhibit-read-only t))
+          (delete-region (process-mark proc) inferior-tcl-delete-prompt-marker))
         (set-marker inferior-tcl-delete-prompt-marker nil))))
   (comint-output-filter proc string))
 
@@ -1052,7 +1045,7 @@ Returns nil if line starts inside a string, t if in a comment."
     (goto-char (process-mark proc))
     (forward-line 0)             ;Not (beginning-of-line) because of fields.
     (if (looking-at comint-prompt-regexp)
-  (set-marker inferior-tcl-delete-prompt-marker (point))))
+        (set-marker inferior-tcl-delete-prompt-marker (point))))
   (comint-send-string proc string))
 
 (defun tcl-send-region (proc start end)
@@ -1060,7 +1053,7 @@ Returns nil if line starts inside a string, t if in a comment."
     (goto-char (process-mark proc))
     (forward-line 0)             ;Not (beginning-of-line) because of fields.
     (if (looking-at comint-prompt-regexp)
-  (set-marker inferior-tcl-delete-prompt-marker (point))))
+        (set-marker inferior-tcl-delete-prompt-marker (point))))
   (comint-send-region proc start end))
 
 (defun switch-to-tcl (eob-p)
@@ -1071,17 +1064,17 @@ With argument, positions cursor at end of buffer."
       (pop-to-buffer inferior-tcl-buffer)
     (error "No current inferior Tcl buffer"))
   (cond (eob-p
-   (push-mark)
-   (goto-char (point-max)))))
+         (push-mark)
+         (goto-char (point-max)))))
 
 (defun inferior-tcl-proc ()
   "Return current inferior Tcl process.
 See variable `inferior-tcl-buffer'."
   (let ((proc (get-buffer-process (if (derived-mode-p 'inferior-tcl-mode)
-              (current-buffer)
-            inferior-tcl-buffer))))
+                                      (current-buffer)
+                                    inferior-tcl-buffer))))
     (or proc
-  (error "No Tcl process; see variable `inferior-tcl-buffer'"))))
+        (error "No Tcl process; see variable `inferior-tcl-buffer'"))))
 
 (defun tcl-eval-region (start end &optional and-go)
   "Send the current region to the inferior Tcl process.
@@ -1141,7 +1134,7 @@ The following commands are available:
 \\{inferior-tcl-mode-map}"
   (set (make-local-variable 'comint-prompt-regexp)
        (or tcl-prompt-regexp
-     (concat "^" (regexp-quote tcl-application) ">")))
+           (concat "^" (regexp-quote tcl-application) ">")))
   (setq mode-line-process '(": %s"))
   (setq local-abbrev-table tcl-mode-abbrev-table)
   (set-syntax-table tcl-mode-syntax-table)
@@ -1156,11 +1149,11 @@ Prefix arg means enter program name interactively.
 See documentation for function `inferior-tcl-mode' for more information."
   (interactive
    (list (if current-prefix-arg
-       (read-string "Run Tcl: " tcl-application)
-     tcl-application)))
+             (read-string "Run Tcl: " tcl-application)
+           tcl-application)))
   (unless (comint-check-proc "*inferior-tcl*")
     (set-buffer (apply (function make-comint) "inferior-tcl" cmd nil
-           tcl-command-switches))
+                       tcl-command-switches))
     (inferior-tcl-mode)
     ;; Make tclsh display a prompt on ms-windows (or under Unix, when a tty
     ;; wasn't used).  Doesn't affect wish, unfortunately.
@@ -1211,37 +1204,37 @@ Returns a list of the form `(FLAG . STATE)'.  STATE can be used
 as input to future invocations.  FLAG is nil if not in comment,
 t otherwise.  If in comment, leaves point at beginning of comment."
   (let ((bol (save-excursion
-         (goto-char end)
-         (line-beginning-position)))
-  real-comment
-  last-cstart)
+               (goto-char end)
+               (line-beginning-position)))
+        real-comment
+        last-cstart)
     (while (and (not last-cstart) (< (point) end))
       (setq real-comment nil)	 ;In case we've looped around and it is set.
       (setq state (parse-partial-sexp (point) end nil nil state t))
       (if (nth 4 state)
-    (progn
-      ;; If ALWAYS-STOP is set, stop even if we don't have a
-      ;; real comment, or if the comment isn't on the same line
-      ;; as the end.
-      (if always-stop (setq last-cstart (point)))
-      ;; If we have a real comment, then set the comment
-      ;; starting point if we are on the same line as the ending
-      ;; location.
-      (setq real-comment (tcl-real-comment-p))
-      (if real-comment
-    (progn
-      (and (> (point) bol) (setq last-cstart (point)))
-      ;; NOTE Emacs 19 has a misfeature whereby calling
-      ;; parse-partial-sexp with COMMENTSTOP set and with
-      ;; an initial list that says point is in a comment
-      ;; will cause an immediate return.  So we must skip
-      ;; over the comment ourselves.
-      (beginning-of-line 2)))
-      ;; Frob the state to make it look like we aren't in a
-      ;; comment.
-      (setcar (nthcdr 4 state) nil))))
+          (progn
+            ;; If ALWAYS-STOP is set, stop even if we don't have a
+            ;; real comment, or if the comment isn't on the same line
+            ;; as the end.
+            (if always-stop (setq last-cstart (point)))
+            ;; If we have a real comment, then set the comment
+            ;; starting point if we are on the same line as the ending
+            ;; location.
+            (setq real-comment (tcl-real-comment-p))
+            (if real-comment
+                (progn
+                  (and (> (point) bol) (setq last-cstart (point)))
+                  ;; NOTE Emacs 19 has a misfeature whereby calling
+                  ;; parse-partial-sexp with COMMENTSTOP set and with
+                  ;; an initial list that says point is in a comment
+                  ;; will cause an immediate return.  So we must skip
+                  ;; over the comment ourselves.
+                  (beginning-of-line 2)))
+            ;; Frob the state to make it look like we aren't in a
+            ;; comment.
+            (setcar (nthcdr 4 state) nil))))
     (and last-cstart
-   (goto-char last-cstart))
+         (goto-char last-cstart))
     (cons real-comment state)))
 
 (defun tcl-in-comment ()
@@ -1278,7 +1271,7 @@ to update the alist.")
   (let ((alist nil))
     (dolist (dir dirlist alist)
       (when (file-directory-p dir)
-  (setq alist (tcl-files-alist dir alist))))))
+        (setq alist (tcl-files-alist dir alist))))))
 
 (defun tcl-reread-help-files ()
   "Set up to re-read files, and then do it."
@@ -1299,18 +1292,18 @@ to update the alist.")
 If FLAG is nil, just uses `current-word'.
 Otherwise scans backward for most likely Tcl command word."
   (if (and flag
-     (derived-mode-p 'tcl-mode 'inferior-tcl-mode))
+           (derived-mode-p 'tcl-mode 'inferior-tcl-mode))
       (condition-case nil
-    (save-excursion
-      ;; Look backward for first word actually in alist.
-      (if (bobp)
-    ()
-        (while (and (not (bobp))
-        (not (tcl-real-command-p)))
-    (backward-sexp)))
-      (if (assoc (tcl-word-no-props) tcl-help-alist)
-    (tcl-word-no-props)))
-  (error nil))
+          (save-excursion
+            ;; Look backward for first word actually in alist.
+            (if (bobp)
+                ()
+              (while (and (not (bobp))
+                          (not (tcl-real-command-p)))
+                (backward-sexp)))
+            (if (assoc (tcl-word-no-props) tcl-help-alist)
+                (tcl-word-no-props)))
+        (error nil))
     (tcl-word-no-props)))
 
 ;;;###autoload
@@ -1321,36 +1314,36 @@ Prefix argument means invert sense of `tcl-use-smart-word-finder'."
    (list
     (progn
       (if (not (equal tcl-help-directory-list tcl-help-saved-dirs))
-    (tcl-reread-help-files))
+          (tcl-reread-help-files))
       (let ((word (tcl-current-word
-       (if current-prefix-arg
-           (not tcl-use-smart-word-finder)
-         tcl-use-smart-word-finder))))
-  (completing-read
-   (if (or (null word) (string= word ""))
-       "Help on Tcl command: "
-     (format "Help on Tcl command (default %s): " word))
-   tcl-help-alist nil t nil nil word)))
+                   (if current-prefix-arg
+                       (not tcl-use-smart-word-finder)
+                     tcl-use-smart-word-finder))))
+        (completing-read
+         (if (or (null word) (string= word ""))
+             "Help on Tcl command: "
+           (format "Help on Tcl command (default %s): " word))
+         tcl-help-alist nil t nil nil word)))
     current-prefix-arg))
   (if (not (equal tcl-help-directory-list tcl-help-saved-dirs))
       (tcl-reread-help-files))
   (if (string= command "")
       (setq command (tcl-current-word
-         (if arg
-       (not tcl-use-smart-word-finder)
-           tcl-use-smart-word-finder))))
+                     (if arg
+                         (not tcl-use-smart-word-finder)
+                       tcl-use-smart-word-finder))))
   (let* ((help (get-buffer-create "*Tcl help*"))
-   (cell (assoc command tcl-help-alist))
-   (file (and cell (cdr cell))))
+         (cell (assoc command tcl-help-alist))
+         (file (and cell (cdr cell))))
     (set-buffer help)
     (delete-region (point-min) (point-max))
     (if file
-  (progn
-    (insert "*** " command "\n\n")
-    (insert-file-contents file))
+        (progn
+          (insert "*** " command "\n\n")
+          (insert-file-contents file))
       (if (string= command "")
-    (insert "Magical Pig!")
-  (insert "Tcl command " command " not in help\n")))
+          (insert "Magical Pig!")
+        (insert "Tcl command " command " not in help\n")))
     (set-buffer-modified-p nil)
     (goto-char (point-min))
     (display-buffer help)))
@@ -1374,17 +1367,17 @@ Prefix argument means switch to the Tcl buffer afterwards."
     ;; car because comint-get-source returns a list holding the
     ;; filename.
     (car (comint-get-source "Load Tcl file: "
-          (or (and
-         (derived-mode-p 'tcl-mode)
-         (buffer-file-name))
-        tcl-previous-dir/file)
-          '(tcl-mode) t))
+                            (or (and
+                                 (derived-mode-p 'tcl-mode)
+                                 (buffer-file-name))
+                                tcl-previous-dir/file)
+                            '(tcl-mode) t))
     current-prefix-arg))
   (comint-check-source file)
   (setq tcl-previous-dir/file (cons (file-name-directory file)
-            (file-name-nondirectory file)))
+                                    (file-name-nondirectory file)))
   (tcl-send-string (inferior-tcl-proc)
-       (format inferior-tcl-source-command (tcl-quote file)))
+                   (format inferior-tcl-source-command (tcl-quote file)))
   (if and-go (switch-to-tcl t)))
 
 (defun tcl-restart-with-file (file &optional and-go)
@@ -1394,16 +1387,16 @@ Prefix argument means switch to the Tcl buffer afterwards."
   (interactive
    (list
     (car (comint-get-source "Restart with Tcl file: "
-          (or (and
-         (derived-mode-p 'tcl-mode)
-         (buffer-file-name))
-        tcl-previous-dir/file)
-          '(tcl-mode) t))
+                            (or (and
+                                 (derived-mode-p 'tcl-mode)
+                                 (buffer-file-name))
+                                tcl-previous-dir/file)
+                            '(tcl-mode) t))
     current-prefix-arg))
   (let* ((buf (if (derived-mode-p 'inferior-tcl-mode)
-      (current-buffer)
-    inferior-tcl-buffer))
-   (proc (and buf (get-process buf))))
+                  (current-buffer)
+                inferior-tcl-buffer))
+         (proc (and buf (get-process buf))))
     (cond
      ((not (and buf (get-buffer buf)))
       ;; I think this will be ok.
@@ -1412,17 +1405,17 @@ Prefix argument means switch to the Tcl buffer afterwards."
      ((or
        (not (comint-check-proc buf))
        (yes-or-no-p
-  "A Tcl process is running, are you sure you want to reset it? "))
+        "A Tcl process is running, are you sure you want to reset it? "))
       (save-excursion
-  (comint-check-source file)
-  (setq tcl-previous-dir/file (cons (file-name-directory file)
-            (file-name-nondirectory file)))
-  (comint-exec (get-buffer-create buf)
-         (if proc
-       (process-name proc)
-           "inferior-tcl")
-         tcl-application file tcl-command-switches)
-  (if and-go (switch-to-tcl t)))))))
+        (comint-check-source file)
+        (setq tcl-previous-dir/file (cons (file-name-directory file)
+                                          (file-name-nondirectory file)))
+        (comint-exec (get-buffer-create buf)
+                     (if proc
+                         (process-name proc)
+                       "inferior-tcl")
+                     tcl-application file tcl-command-switches)
+        (if and-go (switch-to-tcl t)))))))
 
 (defun tcl-electric-hash (&optional count)
   "Insert a `#' and quote if it does not start a real comment.
@@ -1433,32 +1426,32 @@ styles."
   (or count (setq count 1))
   (if (> count 0)
       (let ((type
-       (if (eq tcl-electric-hash-style 'smart)
-     (if (> count 3)	; FIXME what is "smart"?
-         'quote
-       'backslash)
-         tcl-electric-hash-style))
-      comment)
-  (if type
-      (progn
-        (save-excursion
-    (insert "#")
-    (setq comment (tcl-in-comment)))
-        (delete-char 1)
-        (and tcl-explain-indentation (message "comment: %s" comment))
-        (cond
-         ((eq type 'quote)
-    (if (not comment)
-        (insert "\"")))
-         ((eq type 'backslash)
-    ;; The following will set count to 0, so the
-    ;; insert-char can still be run.
-    (if (not comment)
-        (while (> count 0)
-          (insert "\\#")
-          (setq count (1- count)))))
-         (t nil))))
-  (insert-char ?# count))))
+             (if (eq tcl-electric-hash-style 'smart)
+                 (if (> count 3)	; FIXME what is "smart"?
+                     'quote
+                   'backslash)
+               tcl-electric-hash-style))
+            comment)
+        (if type
+            (progn
+              (save-excursion
+                (insert "#")
+                (setq comment (tcl-in-comment)))
+              (delete-char 1)
+              (and tcl-explain-indentation (message "comment: %s" comment))
+              (cond
+               ((eq type 'quote)
+                (if (not comment)
+                    (insert "\"")))
+               ((eq type 'backslash)
+                ;; The following will set count to 0, so the
+                ;; insert-char can still be run.
+                (if (not comment)
+                    (while (> count 0)
+                      (insert "\\#")
+                      (setq count (1- count)))))
+               (t nil))))
+        (insert-char ?# count))))
 
 (defun tcl-hashify-buffer ()
   "Quote all `#'s in current buffer that aren't Tcl comments."
@@ -1466,16 +1459,16 @@ styles."
   (save-excursion
     (goto-char (point-min))
     (let (state
-    result)
+          result)
       (while (< (point) (point-max))
-  (setq result (tcl-hairy-scan-for-comment state (point-max) t))
-  (if (car result)
-      (beginning-of-line 2)
-    (backward-char)
-    (if (eq ?# (following-char))
-        (insert "\\"))
-    (forward-char))
-  (setq state (cdr result))))))
+        (setq result (tcl-hairy-scan-for-comment state (point-max) t))
+        (if (car result)
+            (beginning-of-line 2)
+          (backward-char)
+          (if (eq ?# (following-char))
+              (insert "\\"))
+          (forward-char))
+        (setq state (cdr result))))))
 
 (defun tcl-comment-indent ()
   "Return the desired indentation, but be careful to add a `;' if needed."
@@ -1502,7 +1495,7 @@ The first line is assumed to look like \"#!.../program ...\"."
   (save-excursion
     (goto-char (point-min))
     (if (looking-at "#![^ \t]*/\\([^ \t\n/]+\\)\\([ \t]\\|$\\)")
-  (set (make-local-variable 'tcl-application) (match-string 1)))))
+        (set (make-local-variable 'tcl-application) (match-string 1)))))
 
 
 ;;
@@ -1514,10 +1507,10 @@ The first line is assumed to look like \"#!.../program ...\"."
 (defun tcl-quote (string)
   "Quote STRING according to Tcl rules."
   (mapconcat (lambda (char)
-         (if (memq char '(?\[ ?\] ?{ ?} ?\\ ?\" ?$ ?\s ?\;))
-       (concat "\\" (char-to-string char))
-     (char-to-string char)))
-       string ""))
+               (if (memq char '(?\[ ?\] ?{ ?} ?\\ ?\" ?$ ?\s ?\;))
+                   (concat "\\" (char-to-string char))
+                 (char-to-string char)))
+             string ""))
 
 ;;
 ;; Bug reporting.
