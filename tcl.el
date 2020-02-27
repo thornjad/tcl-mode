@@ -1514,13 +1514,6 @@ The first line is assumed to look like \"#!.../program ...\"."
     (goto-char (point-min))
     (if (looking-at "#![^ \t]*/\\([^ \t\n/]+\\)\\([ \t]\\|$\\)")
   (set (make-local-variable 'tcl-application) (match-string 1)))))
-
-(defun tcl-popup-menu (_e)
-  "XEmacs menu support."
-  (declare (obsolete nil "27.1"))
-  (interactive "@e")
-  (popup-menu tcl-mode-menu))
-
 
 
 ;;
