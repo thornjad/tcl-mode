@@ -1424,17 +1424,6 @@ Prefix argument means switch to the Tcl buffer afterwards."
          tcl-application file tcl-command-switches)
   (if and-go (switch-to-tcl t)))))))
 
-(defun tcl-auto-fill-mode (&optional arg)
-  "Like `auto-fill-mode', but sets `comment-auto-fill-only-comments'."
-  (declare
-   (obsolete
-    "Use `auto-fill-mode' with `comment-auto-fill-only-comments'." "26.1"))
-  (interactive "P")
-  (auto-fill-mode arg)
-  (if auto-fill-function
-      (set (make-local-variable 'comment-auto-fill-only-comments) t)
-    (kill-local-variable 'comment-auto-fill-only-comments)))
-
 (defun tcl-electric-hash (&optional count)
   "Insert a `#' and quote if it does not start a real comment.
 Prefix arg is number of `#'s to insert.
